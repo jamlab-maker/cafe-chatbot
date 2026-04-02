@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>게스트 AI · 고객 지원</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script>
+    (function () {
+      var embed = new URLSearchParams(window.location.search).get('embed') === '1' || window.self !== window.top;
+      if (embed) document.documentElement.classList.add('embed');
+    })();
+  </script>
+</head>
+<body>
+  <div class="app">
+    <div id="chatExpiredOverlay" class="chat-expired-overlay hidden" role="alert" aria-live="polite">
+      <p class="chat-expired-msg">이 매장의 서비스 이용 기간이 만료되었습니다. 매장에 문의해 주세요.</p>
+    </div>
+    <header class="chat-header">
+      <div class="logo">
+        <span class="logo-icon" aria-hidden="true">💬</span>
+        <h1 id="headerTitle">로딩 중...</h1>
+        <p class="subtitle" id="headerSubtitle">게스트 AI</p>
+      </div>
+      <div class="header-lang">
+        <button type="button" id="langBtn" class="lang-btn" aria-label="언어 변경" aria-haspopup="listbox" aria-expanded="false">
+          <svg class="lang-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+          </svg>
+        </button>
+        <div id="langDropdown" class="lang-dropdown hidden" role="listbox">
+          <button type="button" role="option" data-lang="ko">🇰🇷 한국어</button>
+          <button type="button" role="option" data-lang="en">🇺🇸 English</button>
+          <button type="button" role="option" data-lang="ja">🇯🇵 日本語</button>
+          <button type="button" role="option" data-lang="zh">🇨🇳 中文</button>
+          <button type="button" role="option" data-lang="th">🇹🇭 ไทย</button>
+          <button type="button" role="option" data-lang="vi">🇻🇳 Tiếng Việt</button>
+          <button type="button" role="option" data-lang="es">🇪🇸 Español</button>
+          <button type="button" role="option" data-lang="ru">🇷🇺 Русский</button>
+          <button type="button" role="option" data-lang="id">🇮🇩 Bahasa Indonesia</button>
+          <button type="button" role="option" data-lang="de">🇩🇪 Deutsch</button>
+          <button type="button" role="option" data-lang="fr">🇫🇷 Français</button>
+          <button type="button" role="option" data-lang="hi">🇮🇳 हिन्दी</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="chat-main">
+      <section class="chat-history" id="chatHistory" aria-label="채팅 기록">
+        <div class="welcome-message" id="welcomeMessage">
+          <p id="welcomeLine1">안녕하세요! 메뉴, 영업시간, 예약, 주문 문의 등 무엇이든 물어보세요.</p>
+          <p class="lang-hint" id="langHint">한국어 · English · 中文 · 日本語 · ไทย · Tiếng Việt · Español · Русский · Bahasa Indonesia · Deutsch · Français · हिन्दी</p>
+        </div>
+        <div class="prompt-examples-wrap" id="promptExamplesWrap">
+          <p class="prompt-examples-label" id="promptExamplesLabel">예시 질문</p>
+          <div class="prompt-examples" id="promptExamples"></div>
+        </div>
+      </section>
+
+      <form class="chat-input-area" id="chatForm" aria-label="메시지 입력">
+        <label for="messageInput" class="sr-only">메시지 입력</label>
+        <input
+          type="text"
+          id="messageInput"
+          class="message-input"
+          placeholder="메시지를 입력하세요 (12개 언어 지원)"
+          autocomplete="off"
+          maxlength="500"
+          required
+        />
+        <button type="submit" class="send-button" id="sendButton" aria-label="전송">
+          전송
+        </button>
+      </form>
+      <footer class="chat-powered-by" aria-label="서비스 제공">
+        <a href="landing.html" target="_blank" rel="noopener">게스트 AI 제공</a>
+      </footer>
+    </main>
+  </div>
+  <script src="config.default.js"></script>
+  <script src="supabase.config.js"></script>
+  <script src="supabase-api.js"></script>
+  <script src="bootstrap-chat.js"></script>
+</body>
+</html>
