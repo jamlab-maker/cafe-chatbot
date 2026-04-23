@@ -4,6 +4,7 @@
  */
 window.__DEFAULT_SHOP_CONFIG__ = {
   shopName: "샘플 매장",
+  llmEnabled: true,   // Gemini 2.0 Flash LLM-first 응답
   businessType: "cafe",
   accentColor: "#6B5344",
   intro: "카페 · 식당 · 네일 · 사진관 · 피부과 등 소규모 매장용 챗봇 예시입니다.",

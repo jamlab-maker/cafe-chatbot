@@ -224,81 +224,11 @@
       .catch(function () { return String(text || ''); });
   }
 
-  function buildResponses(config) {
-    const name = config.shopName || '매장';
-    const menuLines = (config.menu || []).map(function (m) { return m.name + ' ' + (m.price || ''); }).join('\n');
-    return {
-      empty: '메시지를 입력해 주시면 친절히 안내해 드릴게요.',
-      menu: '오늘의 메뉴입니다:\n' + (menuLines || '(메뉴 없음)') + '\n\n추가 문의 있으시면 말씀해 주세요!',
-      hours: '영업시간: ' + (config.hours || '-') + '\n휴무: ' + (config.closed || '-'),
-      reservation: config.reservation || '예약은 인스타 DM 등으로 받고 있습니다. 인원·시간 알려주시면 확인해 드립니다.',
-      order: config.orderInfo || '테이크아웃·배달 문의는 인스타 DM으로 부탁드립니다.',
-      location: (function () {
-        var lines = [];
-        if (config.address) lines.push(config.address);
-        if (config.directions) lines.push(config.directions);
-        if (config.instagramUrl) lines.push('인스타그램: ' + config.instagramUrl);
-        if (config.naverMapUrl) lines.push('네이버맵: ' + config.naverMapUrl);
-        if (config.googleMapUrl) lines.push('구글맵: ' + config.googleMapUrl);
-        return lines.length ? lines.join('\n') : '';
-      })(),
-      wifi: (config.wifiInfo && config.wifiInfo.trim()) ? config.wifiInfo.trim() : '와이파이 정보가 등록되지 않았습니다.',
-      restroom: (config.faqUseRestroom !== false && config.restroomInfo) ? config.restroomInfo : (config.restroomInfo || '화장실 정보가 등록되지 않았습니다.'),
-      parking: (config.faqUseParking !== false && config.parkingInfo) ? config.parkingInfo : (config.parkingInfo || '주차 정보가 등록되지 않았습니다.'),
-      discount: config.eventText || '현재 진행 중인 이벤트는 없습니다.',
-      thanks: '감사합니다. 좋은 하루 되세요!',
-      hello: '안녕하세요! ' + name + '입니다. 메뉴, 영업시간, 예약, 주문 등 편하게 물어보세요.',
-      fallback: '메뉴, 영업시간, 예약, 주문, 위치, 할인 이벤트 등 궁금한 걸 말씀해 주시면 안내해 드릴게요.'
-    };
-  }
-
-  const patterns = {
-    menu: /메뉴|뭐 있어|음료|드릴 수|시킨다|menu|what do you have|drink|order|菜单|有什么|饮料|点餐|メニュー|何がある|飲み物|注文|thực đơn|carta|меню/i,
-    hours: /영업|시간|몇 시|오픈|마감|운영|hours|open|close|when|时间|营业|几点|开门|営業|時間|何時|オープン|giờ mở|horario|время|работа/i,
-    reservation: /예약|예약하고|방문 예약|자리|reservation|book|reserve|预约|预订|予約|予約したい|đặt bàn|reservar|бронирован/i,
-    order: /주문|배달|테이크아웃|가져가|order|delivery|takeout|take away|订|外卖|带走|注文|配達|đặt món|para llevar|доставка/i,
-    location: /위치|어디|오는 길|주소|location|where|address|地址|在哪里|場所|どこ|住所|ở đâu|dirección|адрес/i,
-    wifi: /와이파이|wifi|wi-fi|무선|인터넷|internet|password|비밀번호|パスワード|密码|รหัส|mật khẩu|contraseña|пароль|kata sandi|passwort|mot de passe|wlan/i,
-    restroom: /화장실|restroom|toilet|bathroom|卫生间|厕所|トイレ|ห้องน้ำ|vệ sinh|baño|санузел|kamar kecil|toilette|toilettes/i,
-    parking: /주차|parking|주차장|停车|駐車|ที่จอดรถ|bãi đỗ|aparcamiento|парковк|tempat parkir|parken|stationnement|पार्किंग/i,
-    discount: /할인|쿠폰|이벤트|프로모션|discount|coupon|event|promotion|优惠|折扣|活动|割引|クーポン|giảm giá|descuento|скидк/i,
-    thanks: /감사|고마워|땡큐|thanks|thank you|谢谢|感謝|ありがとう|cảm ơn|gracias|спас/i,
-    hello: /안녕|하이|hello|hi|你好|こんにちは|您好|xin chào|hola|привет/i
-  };
+  // LLM-first: regex 패턴매칭 및 하드코딩 템플릿 제거
+  // Gemini가 shop config를 기반으로 직접 응답
 
   const roleLabelCustomer = { ko: '고객', en: 'Customer', zh: '顾客', ja: 'お客様', th: 'ลูกค้า', vi: 'Khách', es: 'Cliente', ru: 'Клиент', id: 'Pelanggan', de: 'Kunde', fr: 'Client', hi: 'ग्राहक' };
-  const roleLabelAgent = { ko: '매장', en: 'Shop', zh: '店铺', ja: 'お店', th: 'ร้าน', vi: 'Cửa hàng', es: 'Tienda', ru: 'Магазин', id: 'Toko', de: 'Geschäft', fr: 'Magasin', hi: 'दुकान' };
-
-  function getIntent(msg) {
-    if (patterns.menu.test(msg)) return 'menu';
-    if (patterns.hours.test(msg)) return 'hours';
-    if (patterns.reservation.test(msg)) return 'reservation';
-    if (patterns.order.test(msg)) return 'order';
-    if (patterns.location.test(msg)) return 'location';
-    if (patterns.wifi.test(msg)) return 'wifi';
-    if (patterns.restroom.test(msg)) return 'restroom';
-    if (patterns.parking.test(msg)) return 'parking';
-    if (patterns.discount.test(msg)) return 'discount';
-    if (patterns.thanks.test(msg)) return 'thanks';
-    if (patterns.hello.test(msg)) return 'hello';
-    return 'fallback';
-  }
-
-  function getAgentResponseKo(customerMessage) {
-    var msg = customerMessage.trim();
-    if (!msg) return buildResponses(getConfig()).empty;
-    var config = getConfig();
-    var R = buildResponses(config);
-    if (config.faqUseHours && config.hours && /영업|시간|몇 시|오픈|마감|hours|open|close|时间|営業|giờ|horario|время/i.test(msg)) return R.hours;
-    var customQA = config.customQA || [];
-    for (var i = 0; i < customQA.length; i++) {
-      var q = (customQA[i].question || '').trim();
-      if (!q) continue;
-      if (msg.indexOf(q) !== -1) return (customQA[i].answer || '').trim() || R.fallback;
-    }
-    var intent = getIntent(msg);
-    return R[intent] || R.fallback;
-  }
+  const roleLabelAgent = { ko: '매장', en: 'Shop', zh: '店铺', ja: 'お店', th: 'ร้าน', vi: 'Cửa hàng', es: 'Tienda', ru: 'Магазин', id: 'Toko', de: 'Geschäft', fr: 'Magasin', hi: 'दुकান' };
 
   function appendMessage(text, role, lang, skipRemove) {
     if (!skipRemove && welcomeMessage && welcomeMessage.parentNode) {
@@ -341,100 +271,56 @@
       return '';
     }
 
-    function getKoReplyAsync() {
-      try {
-        var cfg = getConfig() || {};
-        var wantLlm = cfg.llmEnabled === true || cfg.useLlm === true;
-        if (!wantLlm) return Promise.resolve(String(getAgentResponseKo(text)));
-        if (!window.GuestAI || !window.GuestAI.callEdgeFunction || !window.GuestAI.supabaseIsConfigured || !window.GuestAI.supabaseIsConfigured()) {
-          return Promise.resolve(String(getAgentResponseKo(text)));
-        }
-        var slug = getShopSlugForProxy();
-        if (!slug) return Promise.resolve(String(getAgentResponseKo(text)));
-        return window.GuestAI.callEdgeFunction('chat-proxy', { shop_slug: slug, message: text })
-          .then(function (res) {
-            if (res && res.ok && res.text) return String(res.text || '');
-            return String(getAgentResponseKo(text));
-          })
-          .catch(function () {
-            return String(getAgentResponseKo(text));
-          });
-      } catch (e) {
-        return Promise.resolve(String(getAgentResponseKo(text)));
+    // LLM-first: Gemini가 손님 언어로 직접 응답 (별도 번역 불필요)
+    function getLlmReplyAsync() {
+      if (!window.GuestAI || !window.GuestAI.callEdgeFunction || !window.GuestAI.supabaseIsConfigured || !window.GuestAI.supabaseIsConfigured()) {
+        return Promise.resolve('죄송합니다, 현재 응답을 처리할 수 없습니다. 잠시 후 다시 시도해 주세요.');
       }
+      var slug = getShopSlugForProxy();
+      var historyToSend = conversationHistory.slice(-10).map(function (h) {
+        return { role: h.role, text: h.text || h.textKo || '' };
+      });
+      return window.GuestAI.callEdgeFunction('chat-proxy', {
+        shop_slug: slug,
+        message: text,
+        lang: responseLang,
+        conversation_history: historyToSend
+      }).then(function (res) {
+        if (res && res.ok && res.text) return String(res.text);
+        return '죄송합니다, 답변을 가져오지 못했습니다.';
+      }).catch(function () {
+        return '죄송합니다, 일시적인 오류가 발생했습니다.';
+      });
     }
 
-    getKoReplyAsync().then(function (koReply) {
-      // Ensure koReply is always a string
-      koReply = String(koReply || '');
-      conversationHistory.push({ role: 'agent', textKo: koReply });
-
-      if (responseLang === 'ko') {
-        setTimeout(function () {
-          appendMessage(koReply, 'agent', responseLang);
-          sendButton.disabled = false;
-          messageInput.focus();
-        }, 300);
-        return;
-      }
-
-      translate(koReply, responseLang).then(function (translated) {
-        translated = String(translated || '');
-        setTimeout(function () {
-          appendMessage(translated, 'agent', responseLang);
-          sendButton.disabled = false;
-          messageInput.focus();
-        }, 100);
-      }).catch(function () {
-        appendMessage(String(koReply || ''), 'agent', 'ko');
+    getLlmReplyAsync().then(function (reply) {
+      reply = String(reply || '');
+      // Gemini가 이미 손님 언어로 응답하므로 번역 불필요
+      conversationHistory.push({ role: 'agent', text: reply, textKo: reply, lang: responseLang });
+      setTimeout(function () {
+        appendMessage(reply, 'agent', responseLang);
         sendButton.disabled = false;
         messageInput.focus();
-      });
+      }, 100);
     });
   }
 
   function renderConversation() {
     var lang = getUiLang();
     while (chatHistory.firstChild) chatHistory.removeChild(chatHistory.firstChild);
-    var i = 0;
 
-    function next() {
-      if (i >= conversationHistory.length) return Promise.resolve();
-      var item = conversationHistory[i];
-      i += 1;
-
+    // Gemini가 이미 손님 언어로 응답했으므로 재번역 불필요
+    // 저장된 텍스트를 그대로 렌더링
+    conversationHistory.forEach(function (item) {
       if (item.role === 'customer') {
-        if (item.lang === lang) {
-          appendMessage(String(item.text || ''), 'customer', lang, true);
-          return next();
-        }
-        return translateFromTo(String(item.text || ''), item.lang, lang).then(function (translated) {
-          appendMessage(String(translated || ''), 'customer', lang, true);
-          return next();
-        }).catch(function () {
-          appendMessage(String(item.text || ''), 'customer', item.lang, true);
-          return next();
-        });
+        appendMessage(String(item.text || ''), 'customer', item.lang || lang, true);
+      } else {
+        appendMessage(String(item.text || item.textKo || ''), 'agent', item.lang || lang, true);
       }
-
-      // Handle agent messages
-      if (lang === 'ko') {
-        appendMessage(String(item.textKo || ''), 'agent', lang, true);
-        return next();
-      }
-
-      return translate(String(item.textKo || ''), lang).then(function (translated) {
-        appendMessage(String(translated || ''), 'agent', lang, true);
-        return next();
-      }).catch(function () {
-        appendMessage(String(item.textKo || ''), 'agent', 'ko', true);
-        return next();
-      });
-    }
-
-    return next().then(function () {
-      appendPromptExamplesSection();
     });
+
+    appendPromptExamplesSection();
+    return Promise.resolve();
   }
 
   setHeaderFromConfig();
