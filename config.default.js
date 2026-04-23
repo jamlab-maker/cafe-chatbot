@@ -1,54 +1,54 @@
 /**
- * 기본 매장 설정 (데모/폴백)
- * 점주용 앱에서 저장한 설정이 없을 때 사용
+ * Default shop configuration (demo/fallback)
+ * Used when no owner-saved configuration is found.
  */
 window.__DEFAULT_SHOP_CONFIG__ = {
-  shopName: "샘플 매장",
-  llmEnabled: true,   // Gemini 2.0 Flash LLM-first 응답
+  shopName: "Sample Store",
+  llmEnabled: true,   // Gemini 2.0 Flash LLM-first response
   businessType: "cafe",
   accentColor: "#6B5344",
-  intro: "카페 · 식당 · 네일 · 사진관 · 피부과 등 소규모 매장용 챗봇 예시입니다.",
-  hours: "평일 09:00–18:00, 주말 10:00–17:00",
-  closed: "매주 월요일",
-  address: "서울시 강남구 테헤란로 123",
-  directions: "지하철 2호선 역삼역 3번 출구 도보 5분",
+  intro: "A chatbot demo for small businesses like cafes, restaurants, nail salons, photo studios, and clinics.",
+  hours: "Weekdays 09:00–18:00, Weekends 10:00–17:00",
+  closed: "Every Monday",
+  address: "123 Teheran-ro, Gangnam-gu, Seoul",
+  directions: "5-minute walk from Exit 3 of Yeoksam Station (Subway Line 2)",
   instagramUrl: "",
   naverMapUrl: "",
   googleMapUrl: "",
-  wifiInfo: "와이파이 비밀번호: 1234",
+  wifiInfo: "WiFi password: 1234",
   restroomInfo: "",
   parkingInfo: "",
-  reservation: "인스타그램 DM으로 예약 가능. 인원·시간 알려주시면 확인해 드립니다.",
-  orderInfo: "테이크아웃 가능. 배달은 인스타 DM 주문만 가능합니다.",
-  eventText: "단체 10% 할인, 첫 방문 고객 음료 1잔 서비스.",
+  reservation: "Reservations available via Instagram DM. Please share your party size and preferred time.",
+  orderInfo: "Takeout available. Delivery by Instagram DM order only.",
+  eventText: "10% group discount. Free drink for first-time visitors.",
   menu: [
-    { name: "아메리카노", price: "4,500원" },
-    { name: "카페라떼", price: "5,000원" },
-    { name: "베이글 세트", price: "7,000원" }
+    { name: "Americano", price: "4,500 KRW" },
+    { name: "Cafe Latte", price: "5,000 KRW" },
+    { name: "Bagel Set", price: "7,000 KRW" }
   ],
   customQA: [
-    { question: "시그니처", answer: "시그니처 메뉴를 입력해 주세요. (예: 로스팅 아메리카노, 흑당 라떼)" },
-    { question: "인기 메뉴", answer: "가장 잘 나가는 메뉴를 입력해 주세요." },
-    { question: "카푸치노", answer: "카페라떼와 카푸치노 차이점을 간단히 입력해 주세요. (예: 카푸치노는 우유 거품이 더 많고 진합니다)" },
-    { question: "콜드브루", answer: "콜드브루와 아메리카노 차이를 입력해 주세요. (예: 콜드브루는 찬물로 긴 시간 추출한 커피입니다)" },
-    { question: "디카페인", answer: "디카페인 가능 여부·메뉴를 입력해 주세요. (예: 디카페인 원두로 변경 가능합니다)" },
-    { question: "달아요", answer: "케이크·빵 단맛 정도 안내를 입력해 주세요. (예: 당도가 있는 편이에요)" },
-    { question: "디저트 추천", answer: "커피와 어울리는 디저트를 입력해 주세요." },
-    { question: "어린이", answer: "아이들용·카페인 없음·안 매운 메뉴 안내를 입력해 주세요. (예: 초코라떼, 딸기 스무디, 디카페인 등)" },
-    { question: "산미", answer: "산미 없는 원두 등 원두 변경 가능 여부를 입력해 주세요." },
-    { question: "오트 밀크", answer: "오트밀크·두유 등 대체 우유 변경 가능 여부를 입력해 주세요." },
-    { question: "시럽", answer: "시럽·얼음 양 조절 가능 여부를 입력해 주세요." },
-    { question: "샷 추가", answer: "샷 추가 가격을 입력해 주세요. (예: +500원)" },
-    { question: "텀블러", answer: "텀블러 할인 여부·금액을 입력해 주세요. (예: 개인 컵 시 300원 할인)" },
-    { question: "와이파이", answer: "와이파이 비밀번호·접속 방법을 입력해 주세요." },
-    { question: "화장실", answer: "화장실 위치·비밀번호를 입력해 주세요." },
-    { question: "주차", answer: "주차 가능 여부·위치·무료 시간을 입력해 주세요." },
-    { question: "콘센트", answer: "콘센트 있는 자리·충전 맡기기 안내를 입력해 주세요." },
-    { question: "컵 반납", answer: "다 먹은 컵·쟁반 반납 위치를 입력해 주세요." },
-    { question: "몇 시까지", answer: "영업 종료 시간 등 추가 안내가 있으면 입력해 주세요. (기본 영업시간은 위 운영 정보를 사용합니다)" },
-    { question: "애플페이 가능한가요?", answer: "네 가능합니다." },
-    { question: "포인트", answer: "포인트 적립·쿠폰 도장 안내를 입력해 주세요." },
-    { question: "테이크아웃 할인", answer: "테이크아웃 시 할인 여부를 입력해 주세요." },
-    { question: "외부 음식", answer: "외부 음식(생일 케이크 등) 반입 가능 여부를 입력해 주세요." }
+    { question: "signature", answer: "Enter your signature menu item here. (e.g. Roasting Americano, Brown Sugar Latte)" },
+    { question: "popular menu", answer: "Enter your best-selling menu item here." },
+    { question: "cappuccino", answer: "Briefly explain the difference between latte and cappuccino. (e.g. Cappuccino has more milk foam and a stronger taste)" },
+    { question: "cold brew", answer: "Explain the difference between cold brew and americano. (e.g. Cold brew is coffee extracted slowly with cold water over a long period)" },
+    { question: "decaf", answer: "Enter decaf availability. (e.g. Decaf beans available upon request)" },
+    { question: "sweet", answer: "Describe the sweetness level of cakes/breads. (e.g. On the sweeter side)" },
+    { question: "dessert recommendation", answer: "Enter desserts that pair well with coffee." },
+    { question: "kids", answer: "Enter kid-friendly or caffeine-free menu options. (e.g. Hot chocolate, strawberry smoothie, decaf)" },
+    { question: "acidity", answer: "Enter bean change options for low-acidity preferences." },
+    { question: "oat milk", answer: "Enter whether alternative milks like oat milk or soy milk are available." },
+    { question: "syrup", answer: "Enter whether syrup and ice amount can be adjusted." },
+    { question: "extra shot", answer: "Enter extra shot price. (e.g. +500 KRW)" },
+    { question: "tumbler", answer: "Enter tumbler discount info. (e.g. 300 KRW discount for personal cups)" },
+    { question: "wifi", answer: "Enter WiFi password and connection instructions." },
+    { question: "restroom", answer: "Enter restroom location and access code." },
+    { question: "parking", answer: "Enter parking availability, location, and free parking duration." },
+    { question: "outlet", answer: "Enter info about seats with outlets or charging services." },
+    { question: "tray return", answer: "Enter the location to return cups and trays." },
+    { question: "closing time", answer: "Enter any additional info about closing time. (Default hours are shown in the operating info above)" },
+    { question: "Apple Pay", answer: "Yes, Apple Pay is accepted." },
+    { question: "points", answer: "Enter loyalty point or stamp card information." },
+    { question: "takeout discount", answer: "Enter whether a discount applies for takeout orders." },
+    { question: "outside food", answer: "Enter whether outside food (e.g. birthday cakes) is allowed." }
   ]
 };
