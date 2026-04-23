@@ -53,7 +53,46 @@
   };
 
   const UI_LANG_KEY = 'uiLang';
+  const GUEST_ID_KEY = 'guestAiGuestId';
   var conversationHistory = [];
+
+  // 손님 ID 생성/조회 (브라우저 영구 저장)
+  function getOrCreateGuestId() {
+    try {
+      var existing = localStorage.getItem(GUEST_ID_KEY);
+      if (existing) return existing;
+      var newId = 'g-' + Date.now() + '-' + Math.random().toString(36).slice(2, 9);
+      localStorage.setItem(GUEST_ID_KEY, newId);
+      return newId;
+    } catch (e) {
+      return 'g-' + Math.random().toString(36).slice(2, 11);
+    }
+  }
+
+  // 세션 종료 시 선호도 저장
+  function saveSessionMemory() {
+    if (!conversationHistory.length) return;
+    if (!window.GuestAI || !window.GuestAI.callEdgeFunction || !window.GuestAI.supabaseIsConfigured || !window.GuestAI.supabaseIsConfigured()) return;
+    try {
+      var params = new URLSearchParams(window.location.search);
+      var slug = (params.get('shop') || localStorage.getItem('guestAiShopSlug') || '').trim();
+      var guestId = getOrCreateGuestId();
+      var historyToSend = conversationHistory.slice(-20).map(function (h) {
+        return { role: h.role, text: h.text || h.textKo || '' };
+      });
+      window.GuestAI.callEdgeFunction('chat-proxy', {
+        shop_slug: slug,
+        guest_id: guestId,
+        message: '',
+        session_end: true,
+        conversation_history: historyToSend
+      }).catch(function () {});
+    } catch (e) {}
+  }
+
+  // 브라우저 닫기/이탈 시 저장
+  window.addEventListener('pagehide', saveSessionMemory);
+  window.addEventListener('beforeunload', saveSessionMemory);
 
   function getUiLang() {
     try {
@@ -277,6 +316,7 @@
         return Promise.resolve('죄송합니다, 현재 응답을 처리할 수 없습니다. 잠시 후 다시 시도해 주세요.');
       }
       var slug = getShopSlugForProxy();
+      var guestId = getOrCreateGuestId();
       var historyToSend = conversationHistory.slice(-10).map(function (h) {
         return { role: h.role, text: h.text || h.textKo || '' };
       });
@@ -284,6 +324,7 @@
         shop_slug: slug,
         message: text,
         lang: responseLang,
+        guest_id: guestId,
         conversation_history: historyToSend
       }).then(function (res) {
         if (res && res.ok && res.text) return String(res.text);
